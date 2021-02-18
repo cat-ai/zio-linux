@@ -21,7 +21,7 @@ object ZioLinuxTest extends DefaultRunnableSpec {
           src    <- alloc(1 << 4)
           dest   <- alloc(1 << 4)
           copied <- LinuxMemory.memcpy(src, dest)
-          result <- LinuxMemory.equal(src, copied).map(_ => true)
+          result <- LinuxMemory.equal(src, copied)
         } yield assert(result)(equalTo(true))
       }
     ).provideCustomLayerShared(linuxMemory ++ linuxIO ++ Blocking.live) @@ TestAspect.timeout(30.seconds)

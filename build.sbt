@@ -1,24 +1,22 @@
-name := "zio-linux"
+import Dependencies._
 
-version := "0.1"
+ThisBuild / scalaVersion := "2.13.4"
+ThisBuild / version      := "0.0.1"
+ThisBuild / organization := "cat-ai"
+ThisBuild / description  := "Purely functional ZIO interface over Linux via JNA"
 
-scalaVersion := "2.13.4"
+lazy val root =
+  (project in file("."))
+    .settings(
+      name                :=  "zio-linux",
+      libraryDependencies ++= dependencies
+    )
 
-val zioVersion = "1.0.3"
-val jnaVersion = "5.7.0"
-
-libraryDependencies ++= Seq(
-  "dev.zio"                 %% "zio"                     % zioVersion,
-  "dev.zio"                 %% "zio-streams"             % zioVersion,
-  "dev.zio"                 %% "zio-nio"                 % "1.0.0-RC10",
-  "org.scala-lang.modules"  %% "scala-collection-compat" % "2.2.0",
-  "org.apache.logging.log4j" % "log4j-api"               % "2.13.1"   % Test,
-  "org.apache.logging.log4j" % "log4j-core"              % "2.13.1"   % Test,
-  "org.apache.logging.log4j" % "log4j-slf4j-impl"        % "2.13.1"   % Test,
-  "dev.zio"                 %% "zio-test"                % zioVersion % Test,
-  "dev.zio"                 %% "zio-test-sbt"            % zioVersion % Test,
-  "net.java.dev.jna"         % "jna"                     % jnaVersion,
-  "org.jsoup"                % "jsoup"                   % "1.13.1",
-  "org.bouncycastle"         % "bcpkix-jdk15on"          % "1.61"     % Optional,
-  "org.bouncycastle"         % "bcmail-jdk15on"          % "1.61"     % Optional,
-)
+bintrayOrganization := Some("cat-ai")
+bintrayRepository   := "zio"
+publishTo           := Some("bintray" at "https://api.bintray.com/maven/cat-ai/zio/zio-email/;publish=1")
+credentials         += Credentials(Path.userHome / ".sbt" / ".credentials")
+publishMavenStyle   := true
+publishArtifact     := true
+licenses            += ("MIT", url("http://opensource.org/licenses/MIT"))
+homepage            := Some(url("https://github.com/cat-ai/zio-linux"))
