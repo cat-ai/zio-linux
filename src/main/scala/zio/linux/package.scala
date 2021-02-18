@@ -106,7 +106,7 @@ package object linux {
     def openat64(dirFD: Int, path: String, flags: Int, mode: Int): ZIO[LinuxIO with Blocking, IOException, Int] =
       ZIO.accessM(_.get.openat64ZIO(dirFD, path, flags, mode))
 
-    def readfd(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[LinuxIO with Blocking, IOException, NativeSignedSizeT] =
+    def read(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[LinuxIO with Blocking, IOException, NativeSignedSizeT] =
       ZIO.accessM(_.get.readZIO(fd, buffer, size))
 
     def read(fd: Int, buffer: Pointer, size: NativeSizeT): ZIO[LinuxIO with Blocking, IOException, NativeSignedSizeT] =
