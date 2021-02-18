@@ -23,6 +23,9 @@ package object linux {
   def nativeSizeT: ZIO[Blocking, IOException, Unit] =
     effectBlockingIO(Native.SIZE_T_SIZE)
 
+  def alloc(size: Int): ZIO[Blocking, IOException, Memory] =
+    effectBlockingIO(new Memory(size))
+
   def free(pointer: Pointer): ZIO[Blocking, IOException, Unit] =
     effectBlockingIO(Native.free(Pointer.nativeValue(pointer)))
 

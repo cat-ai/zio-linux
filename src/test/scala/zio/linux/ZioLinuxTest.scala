@@ -18,10 +18,9 @@ object ZioLinuxTest extends DefaultRunnableSpec {
   override def spec: Spec[TestEnvironment, TestFailure[Exception], TestSuccess] =
     suite("Common Linux Tests")(
       testM("memcpy") {
-        val src  = new Memory(1 << 4)
-        val dest = new Memory(1 << 4)
-
         for {
+          src    <- alloc(1 << 4)
+          dest   <- alloc(1 << 4)
           copied <- LinuxMemory.memcpy(src, dest)
           result <- LinuxMemory.equal(src, copied).map(_ => true)
         } yield assert(result)(equalTo(true))
