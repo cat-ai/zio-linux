@@ -32,10 +32,7 @@ class ZLinuxMemory[N <: JnaNative] {
     memsetZIO(ptr, b, new NativeSizeT(ptr.size))
 
   def equalZIO(ptr1: Pointer, ptr2: Pointer, n: NativeSizeT): ZIO[Blocking, IOException, Boolean] =
-    for {
-      cond   <- memcmpZIO(ptr1, ptr2, n)
-      result <- ZIO.succeedNow(cond)
-    } yield result == 0
+    memcmpZIO(ptr1, ptr2, n) map(_ == 0)
 
   def equalZIO(ptr1: Pointer, ptr2: Memory): ZIO[Blocking, IOException, Boolean] = equalZIO(ptr1, ptr2, new NativeSizeT(ptr2.size))
 

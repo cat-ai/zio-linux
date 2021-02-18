@@ -1,6 +1,5 @@
 package zio.linux
 
-import com.sun.jna.Memory
 import zio._
 import zio.blocking.Blocking
 import zio.duration.durationInt
