@@ -14,7 +14,7 @@ lazy val root =
 
 bintrayOrganization := Some("cat-ai")
 bintrayRepository   := "zio"
-publishTo           := Some("bintray" at "https://api.bintray.com/maven/cat-ai/zio/zio-email/;publish=1")
+publishTo           := Some("bintray" at "https://api.bintray.com/maven/cat-ai/zio/zio-linux/;publish=1")
 credentials         += Credentials(Path.userHome / ".sbt" / ".credentials")
 publishMavenStyle   := true
 publishArtifact     := true
