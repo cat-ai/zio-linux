@@ -79,6 +79,9 @@ package object linux {
     def close(fd: Int): ZIO[LinuxIO with Blocking, IOException, Int] =
       ZIO.accessM(_.get.closeZIO(fd))
 
+    def open(path: String, flags: Int): ZIO[LinuxIO with Blocking, IOException, Int] =
+      ZIO.accessM(_.get.openZIO(path, flags))
+
     def ioctl(fd: Int, request: NativeLong, arg: Int): ZIO[LinuxIO with Blocking, IOException, Int] =
       ZIO.accessM(_.get.ioctlZIO(fd, request, arg))
 

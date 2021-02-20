@@ -58,6 +58,9 @@ class ZLinuxIO[N <: JnaNative] {
   private def close(fd: Int): Int
 
   @native
+  private def open(path: String, flags: Int): Int
+
+  @native
   private def ioctl(fd: Int, request: NativeLong, arg: Int): Int
 
   @native
@@ -97,6 +100,8 @@ class ZLinuxIO[N <: JnaNative] {
   private def write(fd: Int, buffer: Pointer, size: NativeSizeT): NativeSignedSizeT
 
   def closeZIO(fd: Int): ZIO[Blocking, IOException, Int] = ZIO.succeed(close(fd))
+
+  def openZIO(path: String, flags: Int): ZIO[Blocking, IOException, Int] = ZIO.succeed(open(path, flags))
 
   def ioctlZIO(fd: Int, request: NativeLong, arg: Int): ZIO[Blocking, IOException, Int] =
     effectBlockingIO(ioctl(fd, request, arg))
