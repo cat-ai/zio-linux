@@ -1,8 +1,8 @@
 package zio.linux
 
 import com.sun.jna.{NativeLong, Platform, Pointer, Native => JnaNative}
-import zio.blocking._
-import zio.{ZIO, ZManaged}
+
+import zio.{ZEnv, ZIO, ZManaged}
 
 import java.io.IOException
 
@@ -99,59 +99,59 @@ class ZLinuxIO[N <: JnaNative] {
   @native
   private def write(fd: Int, buffer: Pointer, size: NativeSizeT): NativeSignedSizeT
 
-  def closeZIO(fd: Int): ZIO[Blocking, IOException, Int] = ZIO.succeed(close(fd))
+  def closeZIO(fd: Int): ZIO[ZEnv, IOException, Int] = ZIO.succeed(close(fd))
 
-  def openZIO(path: String, flags: Int): ZIO[Blocking, IOException, Int] = ZIO.succeed(open(path, flags))
+  def openZIO(path: String, flags: Int): ZIO[ZEnv, IOException, Int] = ZIO.succeed(open(path, flags))
 
-  def ioctlZIO(fd: Int, request: NativeLong, arg: Int): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(ioctl(fd, request, arg))
+  def ioctlZIO(fd: Int, request: NativeLong, arg: Int): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(ioctl(fd, request, arg)).refineToOrDie[IOException]
 
-  def ioctlZIO(fd: Int, request: NativeLong, arg: Long): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(ioctl(fd, request, arg))
+  def ioctlZIO(fd: Int, request: NativeLong, arg: Long): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(ioctl(fd, request, arg)).refineToOrDie[IOException]
   
-  def ioctlZIO(fd: Int, request: NativeLong, arg: NativeLong): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(ioctl(fd, request, arg))
+  def ioctlZIO(fd: Int, request: NativeLong, arg: NativeLong): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(ioctl(fd, request, arg)).refineToOrDie[IOException]
 
-  def ioctlZIO(fd: Int, request: NativeLong, arg: Pointer): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(ioctl(fd, request, arg))
+  def ioctlZIO(fd: Int, request: NativeLong, arg: Pointer): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(ioctl(fd, request, arg)).refineToOrDie[IOException]
 
-  def lseek64ZIO(fd: Int, offset: Long, whence: Int): ZIO[Blocking, IOException, Long] =
-    effectBlockingIO(lseek64(fd, offset, whence))
+  def lseek64ZIO(fd: Int, offset: Long, whence: Int): ZIO[ZEnv, IOException, Long] =
+    ZIO.effect(lseek64(fd, offset, whence)).refineToOrDie[IOException]
 
-  def open64ZIO(path: String, flags: Int): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(open64(path, flags))
+  def open64ZIO(path: String, flags: Int): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(open64(path, flags)).refineToOrDie[IOException]
 
-  def open64ZIO(path: String, flags: Int, mode: Int): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(open64(path, flags, mode))
+  def open64ZIO(path: String, flags: Int, mode: Int): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(open64(path, flags, mode)).refineToOrDie[IOException]
   
-  def openat64ZIO(dirFD: Int, path: String, flags: Int): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(openat64(dirFD, path, flags))
+  def openat64ZIO(dirFD: Int, path: String, flags: Int): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(openat64(dirFD, path, flags)).refineToOrDie[IOException]
 
-  def openat64ZIO(dirFD: Int, path: String, flags: Int, mode: Int): ZIO[Blocking, IOException, Int] =
-    effectBlockingIO(openat64(dirFD, path, flags, mode))
+  def openat64ZIO(dirFD: Int, path: String, flags: Int, mode: Int): ZIO[ZEnv, IOException, Int] =
+    ZIO.effect(openat64(dirFD, path, flags, mode)).refineToOrDie[IOException]
 
-  def readZIO(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[Blocking, IOException, NativeSignedSizeT] =
-    effectBlockingIO(read(fd, buffer, size))
+  def readZIO(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[ZEnv, IOException, NativeSignedSizeT] =
+    ZIO.effect(read(fd, buffer, size)).refineToOrDie[IOException]
 
-  def readZIO(fd: Int, buffer: Pointer, size: NativeSizeT): ZIO[Blocking, IOException, NativeSignedSizeT] =
-    effectBlockingIO(read(fd, buffer, size))
+  def readZIO(fd: Int, buffer: Pointer, size: NativeSizeT): ZIO[ZEnv, IOException, NativeSignedSizeT] =
+    ZIO.effect(read(fd, buffer, size)).refineToOrDie[IOException]
 
-  def writeZIO(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[Blocking, IOException, NativeSignedSizeT] =
-    effectBlockingIO(write(fd, buffer, size))
+  def writeZIO(fd: Int, buffer: Array[Byte], size: NativeSizeT): ZIO[ZEnv, IOException, NativeSignedSizeT] =
+    ZIO.effect(write(fd, buffer, size)).refineToOrDie[IOException]
 
-  def writeZIO(fd: Int, buffer: Pointer, size: NativeSizeT): ZIO[Blocking, IOException, NativeSignedSizeT] =
-    effectBlockingIO(write(fd, buffer, size))
+  def writeZIO(fd: Int, buffer: Pointer, size: NativeSizeT): ZIO[ZEnv, IOException, NativeSignedSizeT] =
+    ZIO.effect(write(fd, buffer, size)).refineToOrDie[IOException]
 
-  protected def failZIO: ZIO[Blocking, IOException, IOException] = effectBlockingIO(new IOException("Error"))
+  protected def failZIO: ZIO[ZEnv, IOException, Unit] = ZIO.fail(new IOException("Error"))
 }
 
 object ZLinuxIO {
 
   type Native = JnaNative
 
-  def make: ZManaged[Blocking, IOException, ZLinuxIO[Native]] =
+  def make: ZManaged[ZEnv, IOException, ZLinuxIO[Native]] =
     ZManaged.make(
-      effectBlocking {
+      ZIO.effect {
         val zLinuxIO = new ZLinuxIO[Native]
         zLinuxIO.load
         zLinuxIO

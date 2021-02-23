@@ -11,8 +11,8 @@ import java.io.IOException
 
 object ZioLinuxTest extends DefaultRunnableSpec {
 
-  val linuxMemory: ZLayer[Blocking, TestFailure[IOException], LinuxMemory] = memory.mapError(TestFailure.fail)
-  val linuxIO:     ZLayer[Blocking, TestFailure[IOException], LinuxIO]     = io.mapError(TestFailure.fail)
+  val linuxMemory: ZLayer[ZEnv, TestFailure[IOException], LinuxMemory] = memory.mapError(TestFailure.fail)
+  val linuxIO:     ZLayer[ZEnv, TestFailure[IOException], LinuxIO]     = io.mapError(TestFailure.fail)
 
   override def spec: Spec[TestEnvironment, TestFailure[Exception], TestSuccess] =
     suite("Common Linux Tests")(
@@ -24,5 +24,5 @@ object ZioLinuxTest extends DefaultRunnableSpec {
           result <- LinuxMemory.equal(src, copied)
         } yield assert(result)(equalTo(true))
       }
-    ).provideCustomLayerShared(linuxMemory ++ linuxIO ++ Blocking.live) @@ TestAspect.timeout(30.seconds)
+    ).provideCustomLayerShared(linuxMemory ++ linuxIO ++ ZEnv.live) @@ TestAspect.timeout(30.seconds)
 }
